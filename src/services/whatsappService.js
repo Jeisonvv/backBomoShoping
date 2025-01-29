@@ -12,7 +12,7 @@ let isClientReady = false;
 // Evento para capturar el QR
 client.on('qr', (qr) => {
     qrCode = qr;
-    console.log('Código QR recibido.');
+    
 });
 
 // Evento para cuando el cliente está listo
