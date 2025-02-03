@@ -9,7 +9,7 @@ const HOST = process.env.HOST
 
 connectDB().then(() => {
     appMogoShoping.listen(PORT, () => {
-        console.log(`Server running on http://${HOST}:${PORT}`);
+        console.log(`escuchando por el puert: ${PORT}`);
        
     });
 }).catch((err) => {
