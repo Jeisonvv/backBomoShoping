@@ -1,4 +1,4 @@
-const { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService } = require('../services/userService');
+const { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService, registerUserService } = require('../services/userService');
 
 // Ruta para registrar un usuario solo con el número de teléfono
 const registerUserController = async (req, res) => {
@@ -15,6 +15,15 @@ const registerUserController = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+// controlador para registrar un usurio con nmumPhone, userName y Password
+const registerUserPhoneControler = async (req, res) => {
+    try {
+        const user = await registerUserService(req.body);
+        res.status(201).json({ message: 'Usuario registrado con éxito', user });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
 
 // Controlador para actualizar los datos del usuario
 const updateUserController = async (req, res) => {
@@ -169,4 +178,4 @@ const removeProductUserController = async (req, res) => {
     }
 };
 
-module.exports = { registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController }; //exportamos los controladores
+module.exports = { registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController, registerUserPhoneControler }; //exportamos los controladores

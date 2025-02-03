@@ -2,7 +2,7 @@ const {Router} = require('express');
 
 const routerUser = Router();
 
-const {registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController } = require('../controllers/userContrller');
+const {registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController, registerUserPhoneControler } = require('../controllers/userContrller');
 
 routerUser.get('/', getUserController); //ruta para obtener todos los usuarios
 
@@ -13,6 +13,8 @@ routerUser.get('/credentials/:numPhone', getUserCredentialsController); //ruta p
 routerUser.get('/purchases/:numPhone', getUserPurchasesController); //ruta para obtener las compras de un usuario
 
 routerUser.post('/register', registerUserController); //ruta para registrar un usuario solo con el número de teléfono
+
+routerUser.post('/register-User', registerUserPhoneControler); //ruta para registrar un usuario solo con el número de teléfono, userName, Pasword
 
 routerUser.post('/add-product/:numPhone', addProductToUserController); //ruta para agregar un producto al carrito de un usuario
 

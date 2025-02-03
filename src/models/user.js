@@ -5,8 +5,6 @@ const userSchema = new mongoose.Schema({
     numPhone: { 
         type: String, 
         required: true, 
-        unique: true, 
-        index: true,
     },
     username: { 
         type: String, 

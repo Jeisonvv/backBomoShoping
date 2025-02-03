@@ -1,5 +1,5 @@
 const User = require('../models/user'); // Importar el modelo de usuario
-//const bcrypt = require('bcryptjs'); // Librería para hashear contraseñas
+const bcrypt = require('bcryptjs'); // Librería para hashear contraseñas
 const createRandomUsernameAndPassword = require('../utils/createCredential'); // Importar la función para crear credenciales aleatorias
 
 // Crear un usuario solo con el número de teléfono
@@ -52,6 +52,35 @@ const createUserWithPhoneService = async (numPhone) => {
         throw new Error("Error al crear o actualizar el usuario: " + error.message);
     }
 };
+//  servicion para crear un usuario con el numPhoe . ueserName y pasword
+
+const registerUserService = async (userData) => {
+    const { numPhone, username, password } = userData;
+  
+    if (!numPhone || !username || !password) {
+      throw new Error('El número de teléfono, el username y la contraseña son obligatorios.');
+    }
+  
+    const existingUser = await User.findOne({ numPhone });
+  
+    if (existingUser) {
+      throw new Error('El número de teléfono ya está registrado.');
+    }
+  
+    const existingUserName = await User.findOne({ username });
+  
+    if (existingUserName) {
+      throw new Error('El username ya existe.');
+    }
+  
+    const newUser = new User({
+      numPhone,
+      username,
+      password
+    });
+  
+    return await newUser.save();
+  };
 
 // agregar producto al usuario
 
@@ -266,4 +295,4 @@ const deleteProductFromUserService = async (numPhone, productId) => {
 };
 
 
-module.exports = { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService}; // Exportar los servicios
+module.exports = { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService, registerUserService}; // Exportar los servicios
