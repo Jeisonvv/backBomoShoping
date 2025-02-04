@@ -10,4 +10,4 @@ routerProducts.delete('/:id', deleteProductcontroller); //ruta para eliminar un 
 routerProducts.delete('/', allDelateProductscontroller); //ruta para eliminar todos los productos
 routerProducts.put('/decrementstock/:id', decremenstockProductController); //ruta para decrementar el stock de un producto
 
-module.exports = {routerProducts}; //exportamos el router
+module.exports = {routerProducts}; //exportamos el router   

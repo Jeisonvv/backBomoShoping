@@ -11,6 +11,7 @@ let isClientReady = false;
 
 // Evento para capturar el QR
 client.on('qr', (qr) => {
+    console.log('codigo cuerre')
     qrCode = qr;
     
 });

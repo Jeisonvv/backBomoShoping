@@ -42,7 +42,7 @@ const sendMessageToGroup = async (req, res) => {
         }
 
         // Enviar el mensaje con la imagen si existe
-        const sendMessagePromise = sendMessage(groupId, fixedMessage, lastProduct.image || null);
+        const sendMessagePromise = sendMessage(groupId, fixedMessage, lastProduct.urlImg || null);
 
         // Responder al cliente inmediatamente después de intentar enviar el mensaje
         sendMessagePromise
