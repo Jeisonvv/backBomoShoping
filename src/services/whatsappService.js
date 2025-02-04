@@ -3,7 +3,8 @@ const { reactionListener } = require('../utils/reactionListener');
 
 let qrCode = null;
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    puppeteer: { headless: false},
+    authStrategy: new LocalAuth()
 });
 
 // Variable de estado para saber si el cliente está listo
@@ -11,7 +12,7 @@ let isClientReady = false;
 
 // Evento para capturar el QR
 client.on('qr', (qr) => {
-    console.log('codigo cuerre')
+    console.log('codigo qr')
     qrCode = qr;
     
 });
