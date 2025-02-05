@@ -1,9 +1,9 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
-const { reactionListener } = require('../utils/reactionListener');
+const { reactionListener, startReactionListener } = require('../utils/reactionListener');
 
 let qrCode = null;
 const client = new Client({
-    puppeteer: { headless: false},
+    puppeteer: { headless: true },
     authStrategy: new LocalAuth()
 });
 
@@ -16,6 +16,8 @@ client.on('qr', (qr) => {
     qrCode = qr;
     
 });
+
+startReactionListener()
 
 // Evento para cuando el cliente está listo
 client.on('ready', () => {
