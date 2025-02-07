@@ -1,4 +1,5 @@
 const { getProductByIdService, updateProductService } = require('../services/productsService');
+const {addProductToUserService} = require('../services/userService')
 
 let startTime = null; // Variable global para almacenar el tiempo de inicio
 
@@ -13,20 +14,36 @@ const reactionListener = async (reaction, client) => {
         const reactionTimestamp = reaction.timestamp * 1000; // Convertir la marca de tiempo a milisegundos
         
         if (!startTime || reactionTimestamp < startTime) {
-            console.log('Reacción antigua ignorada.');
+            
             return;
         }
 
         const groupId = '120363322174878103@g.us'; // ID del grupo de ventas
         const groupBomo = '120363322174878103@g.us'; // Grupo de la agencia
+        
+       
+
 
         if (reaction.id.remote === groupId && reaction.reaction === '✅') {
+
             const senderPhoneNumber = reaction.senderId.split('@')[0];
             const originalSenderPhoneNumber = reaction.msgId.participant.split('@')[0];
             const message = await client.getMessageById(reaction.msgId._serialized);
+            let title = ''; // titulo del producto para enviar whatsapp
+            let id = ''; // id del producto para hacer la peticion del producto
+            let fecha = '' // fecha en la que se compro el producto
+            let hora = '' // hora en la que se compro el producto
+            
+            
+        if (message) {
+            const timestampInMilliseconds = message.timestamp * 1000; // Convertir a milisegundos
+            const messageDate = new Date(timestampInMilliseconds);
+            
+            fecha = messageDate.toLocaleDateString();
+            hora = messageDate.toLocaleTimeString();
+        }
 
-            let title = '';
-            let id = '';
+            
 
             if (message.hasQuotedMsg) {
                 const quotedMessage = await message.getQuotedMessage();
@@ -40,22 +57,42 @@ const reactionListener = async (reaction, client) => {
             const confirmationMessage = `✨ ¡Compra confirmada! ✨\n\n${title}\n\n📦 ¡Gracias por tu compra! 🙌\nℹ️ Para más información, contáctanos. 📱\n*BOMO SHOPING*\n👉 3124131990 👈`;
             const confirmationVenta = `🛒 *Venta de producto*\n\n${title}\n\n📱 *Cliente:* ${originalSenderPhoneNumber}\n🔑 *Confirmado por*: ${senderPhoneNumber}`;
 
-            if (originalSenderPhoneNumber) {
-                await client.sendMessage(originalSenderPhoneNumber + '@c.us', confirmationMessage);
-            }
+            
+            if(id){
+                const product = await getProductByIdService(id); // Ahora se usa después de asignar id
+                
 
-            if (groupId) {
-                await client.sendMessage(groupBomo, confirmationVenta);
-            }
+                const newProductAddUser = {
+                    
+                      urlProduct: product.urlImg,
+                      productId: product._id,
+                      productName: product.name,
+                      price: product.price,
+                      purchaseDate: fecha,
+                      purchaseTime: hora
+                    
+                }
+                const allowedPhoneNumbers = ['573017532906', '573112345678', '573023456789']; // Lista de números permitidos
+                if (senderPhoneNumber && allowedPhoneNumbers.includes(senderPhoneNumber)) { 
 
-            const product = await getProductByIdService(id);
+                    await addProductToUserService(originalSenderPhoneNumber, newProductAddUser)
 
-            if (product.countInStock > 0) {
-                product.countInStock -= 1;
-                await updateProductService(id, product);
-            } else {
-                console.error('No hay stock disponible');
+                    await client.sendMessage(originalSenderPhoneNumber + '@c.us', confirmationMessage);
+                    await client.sendMessage(groupBomo, confirmationVenta);
+  
+                      
+                      if (product.countInStock > 0) {
+                          product.countInStock -= 1;
+                          await updateProductService(id, product);
+                      } else {
+                          console.error('No hay stock disponible');
+                      }
+                      
+                 }
             }
+           
+            
+            
         }
     } catch (error) {
         console.error('Error al manejar la reacción:', error);
