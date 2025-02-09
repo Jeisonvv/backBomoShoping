@@ -30,7 +30,7 @@ const sendMessageController = async (req, res) => {
         }
 
         // Enviar el mensaje con el último producto
-        await sendMessage(lastProduct);
+        await sendMessageServiceWhatsapp(lastProduct);
 
         res.status(200).json({ success: true, message: 'Producto guardado y mensaje enviado correctamente.' });
 
@@ -55,7 +55,7 @@ const forwardTheMessageController = async (req, res) => {
     const { id } = req.params;
   
     try {
-      await forwardTheMessage(id); // No necesitas capturar el retorno si solo realiza acciones
+      await forwardTheMessageServiceWatsapp(id); // No necesitas capturar el retorno si solo realiza acciones
       res.status(200).json({ message: 'Mensaje reenviado con éxito' });
     } catch (error) {
       console.error('Error en forwardTheMessageController:', error);
@@ -72,7 +72,7 @@ const buyOnThePageControllerWhatsapp  = async (req, res) =>{
         const result = await buyOnThePageServiceWhatsapp(numPhone, productData);
 
         // Responder con el mensaje de éxito
-        res.status(200).json({message:'producto vendido'});
+        res.status(200).json({message:'producto vendido desde la pagina'});
     } catch (error) {
         // Manejo de errores
         console.error(error);
