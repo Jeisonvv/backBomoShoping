@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
             productId: { type: String, required: true },
             productName: { type: String, required: true },
             price: { type: Number, required: true },
-            purchaseDate: { type: Date, required: true },
+            purchaseDate: { type: String, required: true},
             purchaseTime: { type: String, required: true },
             status: { type: String, enum: ['bodega', 'entregado'], default: 'bodega' },
             paid: { type: Boolean, default: false },

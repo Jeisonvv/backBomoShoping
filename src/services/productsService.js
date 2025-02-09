@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+// trae todos los productos 
 const getProductService = async () => {
     try {
         const products = await Product.find();
@@ -8,7 +8,7 @@ const getProductService = async () => {
         throw new Error(`Error al obtener los productos: ${error.message}`);
     }
 };
-
+// trae un producto por id
 const getProductByIdService = async (id) => {
     try {
         // Buscar el producto por su _id
@@ -23,7 +23,7 @@ const getProductByIdService = async (id) => {
         throw new Error(`Error al obtener el producto: ${error.message}`);
     }
 };
-
+// crea el producto
 const createProductService = async (product) => {
     try {
         const newProduct = new Product(product);

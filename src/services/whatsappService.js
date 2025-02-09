@@ -1,6 +1,11 @@
-const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
+const { Client, LocalAuth} = require('whatsapp-web.js');
 const { reactionListener, startReactionListener } = require('../utils/reactionListener');
 const {sendMessageToGroup} = require('../utils/sendMessage')
+const { getProductByIdService, updateProductService} = require('./productsService')
+const {addProductToUserService} = require('./userService')
+
+const groupBomo = '120363322174878103@g.us';
+const workigGroup = '120363322174878103@g.us';
 
 
 let qrCode = null;
@@ -44,8 +49,10 @@ const getClientStatus = () => {
     return { authenticated: isClientReady };
 };
 
-const sendMessage = async (product) => {
-    const groupId = '120363322174878103@g.us';
+
+
+const sendMessageServiceWhatsapp = async (product) => {
+    
     
     try {
         const status = await getClientStatus();
@@ -64,7 +71,7 @@ const sendMessage = async (product) => {
             `${product._id}`;
 
         // Enviar el mensaje con o sin imagen
-        await sendMessageToGroup( client, groupId, fixedMessage, product.urlImg || null);
+        await sendMessageToGroup( client, groupBomo, fixedMessage, product.urlImg || null);
         console.log('Mensaje enviado con éxito.');
         
     } catch (error) {
@@ -72,10 +79,88 @@ const sendMessage = async (product) => {
         throw error;
     }
 };
+// reenviar el producto a el grupo
+const forwardTheMessageServiceWatsapp = async (id) => {
+    
+    
+    try {
+      let product = await getProductByIdService(id);
+  
+      // Validar si el producto existe
+      if (!product) {
+        throw new Error('Producto no encontrado');
+      }
+  
+      // Incrementar el stock en uno
+      const newStock = product.countInStock + 1;
+      
+  
+      // Actualizar el producto con el nuevo stock
+      await updateProductService(id, { countInStock: newStock });
+  
+      // Obtener el producto actualizado (opcional)
+      const inStockproduct = await getProductByIdService(id);
+  
+      const fixedMessage =
+        `📦 ${inStockproduct.name}\n` +
+        `${inStockproduct.description}\n` +
+        `💲Precio $${inStockproduct.price}\n` +
+        `Und: ${inStockproduct.countInStock}\n` +
+        `${inStockproduct._id}`;
+  
+      await sendMessageToGroup(client, groupBomo, fixedMessage, product.urlImg || null);
+  
+    } catch (error) {
+      console.error('Error al enviar el mensaje:', error);
+      throw error;
+    }
+  };
+
+  const buyOnThePageServiceWhatsapp = async (numPhone, productData) => {
+    try {
+      console.log(productData.productId);
+  
+      // Busca el producto por el ID
+      let product = await getProductByIdService(productData.productId);
+  
+      // Validar si el producto existe
+      if (!product) {
+        throw new Error('Producto no encontrado');
+      }
+  
+      // Verificar si el stock es 0
+      if (product.countInStock === 0) {
+        throw new Error('Artículo no disponible, sin stock');
+      }
+  
+      // Reducir el stock en uno
+      const newStock = product.countInStock - 1;
+  
+      // Actualizar el producto con el nuevo stock
+      await updateProductService(productData.productId, { countInStock: newStock });
+  
+      // Agrega el producto al cliente
+      await addProductToUserService(numPhone, productData);
+  
+      // Crear el mensaje para el grupo
+      const newMessage = `Producto vendido desde la página web\n${productData.productName}\nValor: ${productData.price}\nCliente: ${numPhone}`;
+  
+      // Enviar el mensaje
+      sendMessageToGroup(client, workigGroup, newMessage, productData.urlProduct || null);
+  
+    } catch (error) {
+      console.error(error.message);
+      throw error; // Lanzar el error para que el controlador lo maneje
+    }
+  };
+  
+  
 
 
 module.exports = {
     client,
     getClientStatus,
-    sendMessage,
+    sendMessageServiceWhatsapp,
+    forwardTheMessageServiceWatsapp,
+    buyOnThePageServiceWhatsapp
 };

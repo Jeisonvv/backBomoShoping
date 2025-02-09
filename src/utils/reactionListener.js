@@ -1,5 +1,5 @@
 const { getProductByIdService, updateProductService } = require('../services/productsService');
-const { addProductToUserService } = require('../services/userService');
+const { addProductToUserService, getUserByIdService } = require('../services/userService');
 
 let startTime = null; // Variable global para almacenar el tiempo de inicio
 
@@ -66,9 +66,10 @@ const reactionListener = async (reaction, client) => {
                     purchaseDate: fecha,
                     purchaseTime: hora
                 };
-
-                const allowedPhoneNumbers = ['573017532906', '573112345678', '573023456789']; // Lista de números permitidos
-                if (senderPhoneNumber && allowedPhoneNumbers.includes(senderPhoneNumber)) {
+                const user = await getUserByIdService(senderPhoneNumber)
+                const role = user.role
+                
+                if (senderPhoneNumber && role == 'trabajador' || role == 'administrador') {
                     await addProductToUserService(originalSenderPhoneNumber, newProductAddUser);
 
                     await client.sendMessage(originalSenderPhoneNumber + '@c.us', confirmationMessage);

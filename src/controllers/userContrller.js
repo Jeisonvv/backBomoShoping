@@ -102,7 +102,7 @@ const getUserByIdController = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
+// optener las credenciales por el numero
 const getUserCredentialsController = async (req, res) => {
     try {
         const { numPhone } = req.params; // Obtener el número de teléfono desde los parámetros de la URL

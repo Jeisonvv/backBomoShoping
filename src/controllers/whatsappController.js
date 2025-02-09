@@ -1,5 +1,5 @@
-const { sendMessage, getClientStatus } = require('../services/whatsappService');
 const Product = require('../models/product');
+const { sendMessageServiceWhatsapp, getClientStatus, forwardTheMessageServiceWatsapp, buyOnThePageServiceWhatsapp } = require('../services/whatsappService');
 
 const sendMessageController = async (req, res) => {
     const product = req.body;
@@ -41,7 +41,7 @@ const sendMessageController = async (req, res) => {
 };
 
 
-const getQrCode = (req, res) => {
+const getQrCodeController = (req, res) => {
     const status = getClientStatus();
     if (!status.authenticated && status.qrCode) {
         res.status(200).json({ qrCode: status.qrCode });
@@ -51,8 +51,39 @@ const getQrCode = (req, res) => {
         res.status(500).json({ error: 'No se pudo obtener el QR en este momento.' });
     }
 };
+const forwardTheMessageController = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      await forwardTheMessage(id); // No necesitas capturar el retorno si solo realiza acciones
+      res.status(200).json({ message: 'Mensaje reenviado con éxito' });
+    } catch (error) {
+      console.error('Error en forwardTheMessageController:', error);
+      res.status(500).json({ error: 'Ocurrió un error al reenviar el mensaje' });
+    }
+  };
+// controlador del mensaje para la venta desde la pagina 
+const buyOnThePageControllerWhatsapp  = async (req, res) =>{
+    try {
+        const { numPhone } = req.params; // Obtener el número de teléfono desde los parámetros de la URL
+        const productData = req.body; // Obtener los datos del producto desde el cuerpo de la solicitud
+
+        // Llamar al servicio para agregar el producto al usuario
+        const result = await buyOnThePageServiceWhatsapp(numPhone, productData);
+
+        // Responder con el mensaje de éxito
+        res.status(200).json({message:'producto vendido'});
+    } catch (error) {
+        // Manejo de errores
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+  
 
 module.exports = {
     sendMessageController,
-    getQrCode
+    getQrCodeController,
+    forwardTheMessageController,
+    buyOnThePageControllerWhatsapp
 };
