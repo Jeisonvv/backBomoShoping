@@ -118,7 +118,7 @@ const forwardTheMessageServiceWatsapp = async (id) => {
 
   const buyOnThePageServiceWhatsapp = async (numPhone, productData) => {
     try {
-      console.log(productData.productId);
+     
   
       // Busca el producto por el ID
       let product = await getProductByIdService(productData.productId);
