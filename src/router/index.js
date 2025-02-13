@@ -8,6 +8,7 @@ const {routerProducts} = require('./routerProducts'); // Importar el router de p
 const {routerUser} = require('./routerUsers'); // Importar el router de usuarios
 
 const router = Router();
+// quiero hacer un comit 
 
 router.post('/login', loginController);
 
