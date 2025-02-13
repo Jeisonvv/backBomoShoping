@@ -1,4 +1,4 @@
-const { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService, registerUserService } = require('../services/userService');
+const { createUserWithPhoneService, updateUserService, getUserService, getUserByIdService, deleteUserService, getUserCredentialsService, updateCredentialsService, addProductToUserService, clearPurchasesService, getUserPurchasesService, deleteProductFromUserService, registerUserService , updatePurchasesServiceUsers } = require('../services/userService');
 
 // Ruta para registrar un usuario solo con el número de teléfono
 const registerUserController = async (req, res) => {
@@ -63,6 +63,26 @@ const addProductToUserController = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+// controlador para modifar el array de compras
+const updatePurchasesController = async (req, res) => {
+    const { numPhone } = req.params; // Obtenemos el número de teléfono del usuario
+    const { productsToUpdate } = req.body; // Obtenemos el array de productos a actualizar desde el cuerpo de la solicitud
+  
+    if (!Array.isArray(productsToUpdate) || productsToUpdate.length === 0) {
+      return res.status(400).json({ message: 'Debe enviar un array de productos a actualizar', error });
+    }
+  
+    try {
+      // Llamamos al servicio para actualizar los productos
+      const updatedUser = await updatePurchasesServiceUsers(numPhone, productsToUpdate);
+  
+      // Respondemos con éxito
+      res.status(200).json({ message: 'Productos actualizados con éxito', user: updatedUser });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al actualizar productos', error: error.message });
+    }
+  };
 
 // Controlador para actualizar las credenciales del usuario
 const updateCredentialsController = async (req, res) => {
@@ -178,4 +198,4 @@ const removeProductUserController = async (req, res) => {
     }
 };
 
-module.exports = { registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController, registerUserPhoneControler }; //exportamos los controladores
+module.exports = { registerUserController, updateUserController, getUserController, getUserByIdController, deleteUserComtroller, getUserCredentialsController, updateCredentialsController, addProductToUserController, deleteProductFromUserController, getUserPurchasesController, removeProductUserController, registerUserPhoneControler, updatePurchasesController }; //exportamos los controladores
